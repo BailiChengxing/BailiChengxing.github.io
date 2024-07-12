@@ -1,67 +1,25 @@
-<!DOCTYPE html>
-<html lang="zh-CN">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>百里程星主页</title>
-    <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
+name: Build and Deploy Static Site
 
-        body {
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            font-family: 'Arial', sans-serif;
-        }
+on:
+  push:
+    branches:
+      - main  # 可以根据实际分支设置触发条件
 
-        .container {
-            text-align: center;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
-        }
+jobs:
+  build:
+    runs-on: ubuntu-latest
 
-        .card {
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v2
+      
+      - name: Build site
+        run: |
+          npm install  # 或者其他构建工具的安装命令
+          npm run build  # 构建静态网站的命令
 
-        .card h1 {
-            font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 20px;
-        }
-
-        .card p {
-            font-size: 1.2rem;
-            color: #555;
-            line-height: 1.6;
-            margin-bottom: 15px;
-        }
-
-        .card p:last-child {
-            margin-top: 20px;
-            font-size: 1.5rem;
-            color: #333;
-        }
-    </style>
-</head>
-<body>
-    <div class="container">
-        <div class="card">
-            <h1>百里程星主页</h1>
-            <p>预留他用，联系qq：3145434127</p>
-            <a href="tencent://message/?uin=31454341274&Site=&Menu=yes" target="_blank" title="点击添加好友">点击添加好友</a>
-        </div>
-    </div>
-</body>
-</html>
+      - name: Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: ./build  # 静态网站构建后的目录
