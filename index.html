@@ -4,64 +4,797 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>百里程星主页</title>
+	<link rel="icon" href="https://i.imgs.ovh/2025/05/01/rqnxn.png" type="image/png">
     <style>
+        /* 基本样式 */
         * {
+            box-sizing: border-box;
             margin: 0;
             padding: 0;
-            box-sizing: border-box;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
         }
 
-        body {
+        body.dark-mode {
+            background-color: #222;
+            color: #eee;
+        }
+
+        /* 顶部导航条 - 调整对称性 */
+        .navbar {
+            background-color: #ff9500;
+            padding: 15px 5%;
             display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            margin-right: auto; /* 向左靠齐 */
+            padding-left: 36px; /* 与右侧按钮对称 */
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 夜间模式切换按钮 */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+        }
+
+        /* 移动端菜单按钮 - 默认隐藏 */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* 英雄区域 - 使用16:9比例 */
+        .hero {
+            position: relative;
+            width: 100%;
+            padding-top: 35%; /* 16:9比例 */
+            background: linear-gradient(rgba(0, 0, 0, 0.3), rgba(0, 0, 0, 0.3)), url('https://i.imgs.ovh/2025/05/01/rqQVb.png') center/cover no-repeat;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            overflow: hidden;
+        }
+
+        .hero-content {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            display: flex;
+            flex-direction: column;
             justify-content: center;
             align-items: center;
-            height: 100vh;
-            background: linear-gradient(to right, #ff7e5f, #feb47b);
-            font-family: 'Arial', sans-serif;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+            transform: translateY(20px);
+            opacity: 0;
+            transition: all 0.5s ease 0.2s;
+        }
+
+        .hero.animated .hero-content {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .hero h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        }
+
+        .hero p {
+            font-size: 1.2em;
+            margin-bottom: 30px;
+            text-shadow: 0 1px 3px rgba(0, 0, 0, 0.5);
+            max-width: 80%;
+        }
+
+        .hero-button {
+            background: transparent;
+            color: white;
+            border: 2px solid white;
+            padding: 12px 30px;
+            border-radius: 30px;
+            font-size: 1em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+        }
+
+        .hero-button:hover {
+            background: white;
+            color: #ff9500;
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
         .container {
+            display: flex;
+            flex-direction: row;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 5%;
+            gap: 30px;
+        }
+
+        /* 左边百里程星信息框 */
+        .sidebar {
+            width: 300px;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            position: sticky;
+            top: 80px;
+            height: fit-content;
+        }
+
+        .dark-mode .sidebar,
+        .dark-mode .content,
+        .dark-mode .post {
+            background-color: #333;
+            color: #eee;
+        }
+
+        .dark-mode .profile h2,
+        .dark-mode .post h3 {
+            color: #ff9500;
+        }
+
+        .dark-mode .profile p,
+        .dark-mode .post p {
+            color: #ccc;
+        }
+
+        .profile {
             text-align: center;
-            background: rgba(255, 255, 255, 0.8);
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 0 15px rgba(0, 0, 0, 0.3);
         }
 
-        .card {
-            padding: 20px;
-            background: #fff;
-            border-radius: 10px;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+        .avatar {
+            width: 120px;
+            height: 120px;
+            background: #ffd700 url('https://i.imgs.ovh/2025/05/01/rROgF.jpeg') center/cover;
+            border-radius: 50%;
+            margin: 0 auto 20px;
+            border: 4px solid white;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
         }
 
-        .card h1 {
-            font-size: 2.5rem;
+        .profile h2 {
+            margin: 15px 0;
+            font-size: 1.5em;
             color: #333;
-            margin-bottom: 20px;
+            font-weight: 600;
         }
 
-        .card p {
-            font-size: 1.2rem;
-            color: #555;
-            line-height: 1.6;
+        .profile p {
+            margin: 8px 0;
+            font-size: 1em;
+            color: #666;
+        }
+
+        .social-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+            justify-content: center;
+        }
+
+        .social-button {
+            background-color: #ff9500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .social-button:hover {
+            background-color: #e68600;
+            transform: translateY(-2px);
+        }
+
+        /* 右边内容区域 */
+        .content {
+            flex: 1;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .content h2 {
+            margin-top: 0;
+            margin-bottom: 25px;
+            color: #ff9500;
+            font-size: 1.8em;
+        }
+
+        .posts-container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 25px;
+        }
+
+        .post {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: all 0.3s ease;
+            border: 1px solid #eee;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            display: block;
+        }
+
+        .post:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .post-image {
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0 url('') center/cover;
+            border-radius: 10px;
             margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .post-image-Android {
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0 url('https://i.imgs.ovh/2025/05/01/rq9kg.png') center/cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
         }
 
-        .card p:last-child {
-            margin-top: 20px;
-            font-size: 1.5rem;
-            color: #333;
+        .post-image-Windows {
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0 url('https://i.imgs.ovh/2025/05/01/rqMNY.png') center/cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .post-image-Linux {
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0 url('https://i.imgs.ovh/2025/05/01/rqsOd.png') center/cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+        .post-image-MacOS {
+            width: 100%;
+            height: 160px;
+            background: #f0f0f0 url('https://i.imgs.ovh/2025/05/01/rqD40.png') center/cover;
+            border-radius: 10px;
+            margin-bottom: 15px;
+            overflow: hidden;
+        }
+
+        .post h3 {
+            margin: 0 0 10px 0;
+            color: #ff9500;
+            font-size: 1.3em;
+        }
+
+        .post p {
+            margin: 0;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* 弹窗样式 */
+        .modal-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: rgba(0, 0, 0, 0.6);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1000;
+            opacity: 0;
+            visibility: hidden;
+            transition: all 0.3s ease;
+        }
+
+        .modal-overlay.active {
+            opacity: 1;
+            visibility: visible;
+        }
+
+        .modal {
+            background-color: white;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 400px;
+            padding: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            transform: translateY(20px);
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .dark-mode .modal {
+            background-color: #333;
+            color: #eee;
+        }
+
+        .modal-overlay.active .modal {
+            transform: translateY(0);
+        }
+
+        .modal-title {
+            text-align: center;
+            color: #ff9500;
+            margin-bottom: 20px;
+            font-size: 1.5em;
+        }
+
+        .qr-code {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px;
+            background: #f5f5f5 url('https://i.imgs.ovh/2025/05/01/rq6s6.png') center/cover;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .dark-mode .qr-code {
+            background-color: #444;
+            color: #bbb;
+        }
+		
+        .qr-code2 {
+            width: 200px;
+            height: 200px;
+            margin: 0 auto 25px;
+            background: #f5f5f5 url('https://i.imgs.ovh/2025/05/01/rq8pO.png') center/cover;
+            border-radius: 10px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: #999;
+            font-size: 0.9em;
+        }
+
+        .dark-mode .qr-code2 {
+            background-color: #444;
+            color: #bbb;
+        }
+
+        .close-button {
+            display: block;
+            margin: 0 auto;
+            background-color: #ff9500;
+            color: white;
+            border: none;
+            padding: 10px 25px;
+            border-radius: 5px;
+            cursor: pointer;
+            transition: all 0.3s;
+            font-weight: 500;
+        }
+
+        .close-button:hover {
+            background-color: #e68600;
+            transform: translateY(-2px);
+        }
+
+        /* 移动端菜单 - 默认隐藏 */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background-color: #ff9500;
+            padding: 15px 5%;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            gap: 15px;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 0;
+        }
+
+        /* 移动端样式 */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+                padding: 0 5%;
+                gap: 20px;
+            }
+
+            .sidebar {
+                width: 100%;
+                position: relative;
+                top: 0;
+                margin-bottom: 0;
+                padding: 25px;
+            }
+
+            .posts-container {
+                grid-template-columns: 1fr;
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .navbar {
+                padding: 15px 5%;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+
+            .hero {
+                padding-top: 50%; /* 移动端调整为2:1比例 */
+                margin-bottom: 20px;
+            }
+
+            .hero h1 {
+                font-size: 2em;
+            }
+
+            .hero p {
+                font-size: 1em;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                padding-left: 0; /* 移动端取消左边距 */
+                margin-right: 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .nav-right {
+                gap: 10px;
+            }
+
+            .hero {
+                border-radius: 0;
+                margin-left: -5%;
+                margin-right: -5%;
+                width: calc(100% + 10%);
+            }
+
+            .hero h1 {
+                font-size: 1.8em;
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 15px;
+            }
+
+            .sidebar, .content {
+                padding: 20px;
+            }
+
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+
+            .modal {
+                padding: 20px;
+                width: 95%;
+            }
+
+            .qr-code {
+                width: 180px;
+                height: 180px;
+            }
+
+            .hero {
+                padding-top: 70%; /* 移动端小屏幕调整为更窄的比例 */
+            }
         }
     </style>
 </head>
 <body>
+    <!-- 顶部导航条 -->
+    <nav class="navbar">
+        <a href="https://bailichengxing.github.io" class="logo">百里程星主页</a>
+        
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="https://bailichengxing.github.io">HOME</a>
+                <a href="About.html">NONE</a>
+                <a href="About.html">NONE</a>
+            </div>
+            
+            <button class="mobile-menu-button">☰</button>
+            <button class="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 -->
+    <div class="mobile-menu">
+        <a href="https://bailichengxing.github.io">HOME</a>
+        <a href="About.html">NONE</a>
+        <a href="About.html">NONE</a>
+    </div>
+
     <div class="container">
-        <div class="card">
-            <h1>百里程星主页</h1>
-            <p>本页面预留他用，联系qq：3145434127</p>
-            <a href="tencent://message/?uin=31454341274&Site=&Menu=yes" target="_blank" title="点击添加好友">点击添加好友</a>
+        <!-- 左边百里程星信息框 -->
+        <div class="sidebar">
+            <div class="profile">
+                <div class="avatar"></div>
+                <h2>百里程星</h2>
+                <p>联系邮箱：bailichengxing@qq.com</p>
+                <div class="social-buttons">
+                    <button id="qq-button" class="social-button">QQ</button>
+                    <button id="wechat-button" class="social-button">微信</button>
+                </div>
+            </div>
+        </div>
+
+        <!-- 右边内容区域 -->
+        <div class="content">
+            <!-- 英雄区域 - 使用固定比例 -->
+            <div class="hero" id="hero">
+                <div class="hero-content">
+                    <h1>只为发烧而生</h1>
+                    <p>奔赴山海</p>
+                    <a href="https://bailichengxing.github.io" class="hero-button">了解一下</a>
+                </div>
+            </div>
+
+            <h2>Resource</h2>
+            <div class="posts-container">
+                <!-- 帖子1 -->
+                <a href="https://www.423down.com/" class="post" target="_blank">
+                    <div class="post-image-Windows"></div>
+                    <h3>Windows</h3>
+                    <p>一扇视窗看遍大千世界</p>
+                </a>
+                
+                <!-- 帖子2 -->
+                <a href="https://www.ghxi.com/" class="post" target="_blank">
+                    <div class="post-image-Android"></div>
+                    <h3>Android</h3>
+                    <p>化身人形机器人踏遍万水千山</p>
+                </a>
+                
+                <!-- 帖子3 -->
+                <a href="https://www.qijishow.com/down/" class="post" target="_blank">
+                    <div class="post-image-Linux"></div>
+                    <h3>Linux</h3>
+                    <p>也许你不知道它的存在，但它一直在你身边</p>
+                </a>
+                
+                <!-- 帖子4 -->
+                <a href="https://www.macz.com/" class="post" target="_blank">
+                    <div class="post-image-MacOS"></div>
+                    <h3>MacOS</h3>
+                    <p>生来便与众不同的存在</p>
+                </a>
+                
+                <!-- 帖子5 -->
+                <a href="https://bailichengxing.github.io" class="post" target="_blank">
+                    <div class="post-image"></div>
+                    <h3>Minecraft</h3>
+                    <p>你手里的方块是我的整个世界</p>
+                </a>
+                
+                <!-- 帖子6 -->
+                <a href="https://bailichengxing.github.io" class="post" target="_blank">
+                    <div class="post-image"></div>
+                    <h3>Internet</h3>
+                    <p>建设中...</p>
+                </a>
+				
+            </div>
         </div>
     </div>
+
+    <!-- QQ弹窗 -->
+    <div id="qq-modal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">QQ二维码</h3>
+            <div class="qr-code"></div>
+            <button class="close-button">关闭</button>
+        </div>
+    </div>
+
+    <!-- 微信弹窗 -->
+    <div id="wechat-modal" class="modal-overlay">
+        <div class="modal">
+            <h3 class="modal-title">微信二维码</h3>
+            <div class="qr-code2"></div>
+            <button class="close-button">关闭</button>
+        </div>
+    </div>
+
+    <script>
+        // 获取DOM元素
+        const qqButton = document.getElementById('qq-button');
+        const wechatButton = document.getElementById('wechat-button');
+        const qqModal = document.getElementById('qq-modal');
+        const wechatModal = document.getElementById('wechat-modal');
+        const closeButtons = document.querySelectorAll('.close-button');
+        const themeToggle = document.querySelector('.theme-toggle');
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+        const hero = document.getElementById('hero');
+
+        // 显示QQ弹窗
+        qqButton.addEventListener('click', () => {
+            qqModal.classList.add('active');
+        });
+
+        // 显示微信弹窗
+        wechatButton.addEventListener('click', () => {
+            wechatModal.classList.add('active');
+        });
+
+        // 关闭弹窗
+        closeButtons.forEach(button => {
+            button.addEventListener('click', () => {
+                button.closest('.modal-overlay').classList.remove('active');
+            });
+        });
+
+        // 点击模态框外部关闭
+        document.querySelectorAll('.modal-overlay').forEach(modal => {
+            modal.addEventListener('click', (e) => {
+                if (e.target === modal) {
+                    modal.classList.remove('active');
+                }
+            });
+        });
+
+        // ESC键关闭
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape') {
+                document.querySelectorAll('.modal-overlay').forEach(modal => {
+                    modal.classList.remove('active');
+                });
+            }
+        });
+
+        // 夜间模式切换
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            // 切换图标
+            if (document.body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '🌞';
+            } else {
+                themeToggle.textContent = '🌓';
+            }
+            
+            // 添加旋转动画
+            themeToggle.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 300);
+        });
+
+        // 移动端菜单切换
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            mobileMenuButton.textContent = mobileMenu.classList.contains('active') ? '✕' : '☰';
+        });
+
+        // 页面加载后触发英雄区域动画
+        window.addEventListener('load', () => {
+            setTimeout(() => {
+                hero.classList.add('animated');
+            }, 300);
+        });
+    </script>
 </body>
 </html>
