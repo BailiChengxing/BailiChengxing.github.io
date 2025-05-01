@@ -1,0 +1,350 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>子页面 - 百里程星主页</title>
+	<link rel="icon" href="https://i.imgs.ovh/2025/05/01/rqnxn.png" type="image/png">
+    <style>
+        /* 基本样式 - 与主站完全一致 */
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+            transition: background-color 0.3s, color 0.3s;
+        }
+        
+        body {
+            font-family: 'Helvetica Neue', Arial, sans-serif;
+            background-color: #f5f5f5;
+            color: #333;
+            line-height: 1.6;
+            overflow-x: hidden;
+        }
+
+        body.dark-mode {
+            background-color: #222;
+            color: #eee;
+        }
+
+        /* 顶部导航条 - 与主站完全一致 */
+        .navbar {
+            background-color: #ff9500;
+            padding: 15px 5%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .logo {
+            color: white;
+            font-size: 1.5em;
+            font-weight: bold;
+            text-decoration: none;
+            margin-right: auto;
+            padding-left: 36px;
+        }
+
+        .nav-right {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 20px;
+        }
+
+        .nav-links a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            padding: 5px 10px;
+            border-radius: 5px;
+            transition: all 0.3s;
+        }
+
+        .nav-links a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        /* 夜间模式切换按钮 - 与主站完全一致 */
+        .theme-toggle {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2em;
+            cursor: pointer;
+            padding: 5px;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.3s;
+        }
+
+        .theme-toggle:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+            transform: rotate(30deg);
+        }
+
+        /* 移动端菜单按钮 - 与主站完全一致 */
+        .mobile-menu-button {
+            display: none;
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.5em;
+            cursor: pointer;
+            padding: 5px;
+        }
+
+        /* 主容器 - 调整为适合子页面 */
+        .container {
+            display: flex;
+            flex-direction: row;
+            max-width: 1400px;
+            margin: 30px auto;
+            padding: 0 5%;
+            gap: 30px;
+        }
+
+        /* 内容区域 - 与主站风格一致 */
+        .content {
+            flex: 1;
+            background-color: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .dark-mode .content {
+            background-color: #333;
+            color: #eee;
+        }
+
+        .content h1 {
+            color: #ff9500;
+            margin-top: 0;
+            margin-bottom: 25px;
+            font-size: 2em;
+        }
+
+        /* 卡片样式 - 与主站帖子风格一致 */
+        .content-card {
+            background-color: #fff;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            margin-bottom: 25px;
+            border: 1px solid #eee;
+        }
+
+        .dark-mode .content-card {
+            background-color: #3a3a3a;
+            border-color: #444;
+        }
+
+        .content-card h2 {
+            color: #ff9500;
+            margin-top: 0;
+            font-size: 1.5em;
+        }
+
+        /* 按钮样式 - 与主站一致 */
+        .primary-btn {
+            display: inline-block;
+            background-color: #ff9500;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 5px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+        }
+
+        .primary-btn:hover {
+            background-color: #e68600;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        /* 移动端菜单 - 与主站完全一致 */
+        .mobile-menu {
+            display: none;
+            position: fixed;
+            top: 70px;
+            left: 0;
+            right: 0;
+            background-color: #ff9500;
+            padding: 15px 5%;
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+            flex-direction: column;
+            gap: 15px;
+            transform: translateY(-100%);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 99;
+        }
+
+        .mobile-menu.active {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .mobile-menu a {
+            color: white;
+            text-decoration: none;
+            padding: 8px 0;
+        }
+
+        /* 移动端样式 - 与主站完全一致 */
+        @media (max-width: 992px) {
+            .container {
+                flex-direction: column;
+                padding: 0 5%;
+                gap: 20px;
+            }
+
+            .content {
+                padding: 25px;
+            }
+
+            .navbar {
+                padding: 15px 5%;
+            }
+
+            .nav-links {
+                gap: 15px;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .logo {
+                padding-left: 0;
+                margin-right: 0;
+            }
+
+            .nav-links {
+                display: none;
+            }
+
+            .mobile-menu-button {
+                display: block;
+            }
+
+            .mobile-menu {
+                display: flex;
+            }
+
+            .nav-right {
+                gap: 10px;
+            }
+
+            .content {
+                border-radius: 0;
+                margin-left: -5%;
+                margin-right: -5%;
+                width: calc(100% + 10%);
+            }
+        }
+
+        @media (max-width: 576px) {
+            .navbar {
+                padding: 15px;
+            }
+
+            .content {
+                padding: 20px;
+            }
+
+            .content h1 {
+                font-size: 1.8em;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 顶部导航条 - 与主站完全一致 -->
+    <nav class="navbar">
+        <a href="https://bailichengxing.github.io" class="logo">百里程星主页</a>
+        
+        <div class="nav-right">
+            <div class="nav-links">
+                <a href="https://bailichengxing.github.io">HOME</a>
+                <a href="About.html">NONE</a>
+                <a href="About.html">NONE</a>
+            </div>
+            
+            <button class="mobile-menu-button">☰</button>
+            <button class="theme-toggle">🌓</button>
+        </div>
+    </nav>
+
+    <!-- 移动端菜单 - 与主站完全一致 -->
+    <div class="mobile-menu">
+        <a href="https://bailichengxing.github.io">HOME</a>
+        <a href="About.html">NONE</a>
+        <a href="About.html">NONE</a>
+    </div>
+
+    <!-- 主内容区 -->
+    <div class="container">
+        <!-- 主内容区域 -->
+        <main class="content">
+            <h1>子页面标题</h1>
+            
+            <!-- 内容卡片1 -->
+            <div class="content-card">
+                <h2>内容区块标题</h2>
+                <p>建设中...</p>
+                <a href="#" class="primary-btn">操作按钮</a>
+            </div>
+            
+            <!-- 内容卡片2 -->
+            <div class="content-card">
+                <h2>另一个内容区块</h2>
+                <p>建设中...</p>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // 与主站完全一致的JS功能
+        const themeToggle = document.querySelector('.theme-toggle');
+        const mobileMenuButton = document.querySelector('.mobile-menu-button');
+        const mobileMenu = document.querySelector('.mobile-menu');
+
+        // 夜间模式切换
+        themeToggle.addEventListener('click', () => {
+            document.body.classList.toggle('dark-mode');
+            
+            if (document.body.classList.contains('dark-mode')) {
+                themeToggle.textContent = '🌞';
+            } else {
+                themeToggle.textContent = '🌓';
+            }
+            
+            themeToggle.style.transform = 'rotate(360deg)';
+            setTimeout(() => {
+                themeToggle.style.transform = '';
+            }, 300);
+        });
+
+        // 移动端菜单切换
+        mobileMenuButton.addEventListener('click', () => {
+            mobileMenu.classList.toggle('active');
+            mobileMenuButton.textContent = mobileMenu.classList.contains('active') ? '✕' : '☰';
+        });
+    </script>
+</body>
+</html>
