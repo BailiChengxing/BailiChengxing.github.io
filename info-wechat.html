@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>个人微信二维码</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        /* 基础重置 */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'PingFang SC', 'Microsoft YaHei', sans-serif;
+        }
+        
+        /* 禁止页面滚动 */
+        html, body {
+            overflow: hidden;
+            height: 100%;
+            width: 100%;
+        }
+        
+        /* 微信绿色渐变背景 */
+        body {
+            background: linear-gradient(135deg, 
+                #1aad19 0%,      /* 微信经典绿 */
+                #2cd164 40%,     /* 亮绿 */
+                #8bdf9e 80%,     /* 中间绿 */
+                #e8f7ed 100%     /* 淡绿 */
+            );
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            position: relative;
+        }
+        
+        /* 背景装饰元素 */
+        .bg-circle {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.15);
+            z-index: 1;
+            animation: float 8s ease-in-out infinite;
+        }
+        
+        .circle-1 {
+            width: 300px;
+            height: 300px;
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+        
+        .circle-2 {
+            width: 200px;
+            height: 200px;
+            bottom: -80px;
+            right: -80px;
+            animation-delay: 2s;
+        }
+        
+        .circle-3 {
+            width: 150px;
+            height: 150px;
+            top: 20%;
+            right: 10%;
+            animation-delay: 4s;
+        }
+        
+        /* 浮动动画 */
+        @keyframes float {
+            0%, 100% { 
+                transform: translate(0, 0) rotate(0deg); 
+            }
+            50% { 
+                transform: translate(20px, -20px) rotate(5deg); 
+            }
+        }
+        
+        /* 主容器 */
+        .container {
+            width: 100%;
+            max-width: 380px;
+            z-index: 10;
+        }
+        
+        /* 卡片主体 */
+        .profile-card {
+            background-color: white;
+            border-radius: 25px;
+            padding: 30px 25px 25px 25px;
+            box-shadow: 0 20px 40px rgba(7, 193, 96, 0.15);
+            text-align: center;
+            position: relative;
+            overflow: visible;
+            transition: transform 0.4s ease, box-shadow 0.4s ease;
+            min-height: 450px;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        .profile-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 25px 50px rgba(7, 193, 96, 0.22);
+        }
+        
+        /* 圆形头像容器 */
+        .avatar-container {
+            position: relative;
+            margin-top: -50px;
+            margin-bottom: 20px;
+            z-index: 2;
+        }
+        
+        /* 圆形头像 */
+        .avatar {
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            border: 5px solid white;
+            box-shadow: 0 8px 20px rgba(7, 193, 96, 0.2);
+            object-fit: cover;
+            margin: 0 auto;
+            display: block;
+            animation: avatarAppear 0.6s ease-out 0.3s both;
+        }
+        
+        /* 姓名 */
+        .name {
+            color: #333;
+            font-size: 28px;
+            font-weight: 700;
+            margin-bottom: 30px;
+        }
+        
+        /* 二维码区域 */
+        .qrcode-section {
+            margin-top: 20px;
+            padding: 20px 0 10px 0;
+        }
+        
+        /* 二维码标题 */
+        .qrcode-title {
+            color: #07c160;
+            font-size: 18px;
+            font-weight: 600;
+            margin-bottom: 20px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+        
+        .qrcode-title i {
+            font-size: 20px;
+        }
+        
+        /* 圆角矩形二维码 */
+        .qrcode-box {
+            width: 240px;
+            height: 240px;
+            margin: 0 auto;
+            border-radius: 15px;
+            background: #f8f9fa;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(7, 193, 96, 0.1);
+            border: 1px solid #e8f7ed;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: transform 0.3s ease;
+            overflow: hidden;
+        }
+        
+        .qrcode-box:hover {
+            transform: scale(1.02);
+        }
+        
+        /* 二维码图片 */
+        .qrcode-img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+        
+        /* 底部文字 */
+        .footer {
+            margin-top: 25px;
+            color: #888;
+            font-size: 13px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+        }
+        
+        /* 动画效果 */
+        @keyframes fadeInUp {
+            from { 
+                opacity: 0; 
+                transform: translateY(30px); 
+            }
+            to { 
+                opacity: 1; 
+                transform: translateY(0); 
+            }
+        }
+        
+        @keyframes avatarAppear {
+            0% { 
+                opacity: 0; 
+                transform: scale(0.8); 
+            }
+            100% { 
+                opacity: 1; 
+                transform: scale(1); 
+            }
+        }
+        
+        .profile-card {
+            animation: fadeInUp 0.8s ease-out;
+        }
+        
+        /* 响应式设计 */
+        @media (max-width: 480px) {
+            .container {
+                max-width: 320px;
+            }
+            
+            .profile-card {
+                padding: 25px 20px 20px 20px;
+                min-height: 420px;
+            }
+            
+            .avatar {
+                width: 100px;
+                height: 100px;
+            }
+            
+            .name {
+                font-size: 24px;
+                margin-bottom: 25px;
+            }
+            
+            .qrcode-title {
+                font-size: 16px;
+            }
+            
+            .qrcode-box {
+                width: 200px;
+                height: 200px;
+                padding: 15px;
+            }
+            
+            .footer {
+                font-size: 12px;
+            }
+        }
+        
+        /* 水波纹效果 */
+        .ripple {
+            position: absolute;
+            border-radius: 50%;
+            background: rgba(7, 193, 96, 0.3);
+            transform: scale(0);
+            animation: ripple-animation 0.6s linear;
+            pointer-events: none;
+        }
+        
+        @keyframes ripple-animation {
+            to {
+                transform: scale(4);
+                opacity: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- 背景装饰元素 -->
+    <div class="bg-circle circle-1"></div>
+    <div class="bg-circle circle-2"></div>
+    <div class="bg-circle circle-3"></div>
+    
+    <!-- 主卡片 -->
+    <div class="container">
+        <div class="profile-card">
+            <!-- 圆形头像 -->
+            <div class="avatar-container">
+                <img src="https://image.bailichengxing.tech/api/rfile/头像-std.png" 
+                     alt="头像" 
+                     class="avatar">
+            </div>
+            
+            <!-- 姓名 -->
+            <h1 class="name">百里程星</h1>
+            
+            <!-- 二维码部分 -->
+            <div class="qrcode-section">
+                <div class="qrcode-title">
+                    <i class="fas fa-qrcode"></i>
+                    <span>扫描二维码添加我微信</span>
+                </div>
+                <div class="qrcode-box" id="qrcodeBox">
+                    <!-- 二维码占位图片 -->
+                    <img src="https://image.bailichengxing.tech/api/rfile/Wechat-web.png" 
+                         alt="微信二维码" 
+                         class="qrcode-img">
+                </div>
+            </div>
+            
+            <!-- 底部文字 -->
+            <div class="footer">
+                <p>扫码后请备注来意</p>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const card = document.querySelector('.profile-card');
+            const qrcodeBox = document.getElementById('qrcodeBox');
+            
+            // 二维码框点击效果
+            qrcodeBox.addEventListener('click', function() {
+                alert('扫码添加微信\n微信号: bailichengxing');
+            });
+            
+            // 水波纹效果
+            qrcodeBox.addEventListener('mousedown', function(e) {
+                const ripple = document.createElement('div');
+                ripple.classList.add('ripple');
+                
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    width: ${size}px;
+                    height: ${size}px;
+                    left: ${x}px;
+                    top: ${y}px;
+                `;
+                
+                this.appendChild(ripple);
+                
+                setTimeout(() => {
+                    ripple.remove();
+                }, 600);
+            });
+            
+            // 卡片悬停效果
+            card.addEventListener('mouseenter', function() {
+                this.style.transform = 'translateY(-8px)';
+            });
+            
+            card.addEventListener('mouseleave', function() {
+                this.style.transform = 'translateY(0)';
+            });
+            
+            // 背景圆圈动画
+            const circles = document.querySelectorAll('.bg-circle');
+            circles.forEach((circle, index) => {
+                circle.style.animationDelay = `${index * 2}s`;
+            });
+            
+            // 图片加载失败时的后备方案
+            const avatarImg = document.querySelector('.avatar');
+            const qrcodeImg = document.querySelector('.qrcode-img');
+            
+            avatarImg.addEventListener('error', function() {
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzA3YzE2MCIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjgwIiByPSI0MCIgZmlsbD0iI2ZmZiIvPjxjaXJjbGUgY3g9IjEwMCIgY3k9IjEyMCIgcj0iNjAiIGZpbGw9IiNmZmYiLz48L3N2Zz4K';
+                this.alt = '头像加载失败';
+            });
+            
+            qrcodeImg.addEventListener('error', function() {
+                this.src = 'data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgZmlsbD0iIzJjM2U1MCIvPjx0ZXh0IHg9IjUwJSIgeT0iNTAlIiBmb250LWZhbWlseT0iQXJpYWwiIGZvbnQtc2l6ZT0iMTQiIGZpbGw9IiNmZmYiIHRleHQtYW5jaG9yPSJtaWRkbGUiIGR5PSIwLjNlbSI+V0VDSEFUIFFSIENPREU8L3RleHQ+PC9zdmc+';
+                this.alt = '二维码加载失败';
+            });
+        });
+    </script>
+</body>
+</html>
