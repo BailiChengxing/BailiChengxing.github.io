@@ -11,9 +11,19 @@
   var started = false;
   var keyboardSceneHooked = false;
   var pressedKeys = new Set();
+  var userAgent = navigator.userAgent || "";
+  var platform = navigator.platform || "";
+  var coarsePointer = window.matchMedia("(pointer: coarse)").matches;
+  var finePointer = window.matchMedia("(hover: hover) and (pointer: fine)").matches;
+  var iPadDesktopMode = /Macintosh|Mac OS X/i.test(userAgent) && navigator.maxTouchPoints > 1;
+  var mobileBrowser =
+    /Android|iPhone|iPad|iPod|Mobile|HarmonyOS|Windows Phone|Opera Mini|IEMobile/i.test(userAgent) ||
+    iPadDesktopMode ||
+    (coarsePointer && navigator.maxTouchPoints > 0 && window.innerWidth < 1200);
   var desktopInputEnabled =
-    window.matchMedia("(hover: hover) and (pointer: fine)").matches ||
-    /Win|Mac|Linux/.test(navigator.platform || "");
+    !mobileBrowser && (finePointer || /Win|Mac|Linux/.test(platform));
+
+  document.documentElement.dataset.inputMode = desktopInputEnabled ? "desktop" : "mobile";
 
   function movementAngle(keys, up, down, left, right) {
     var x = (keys.has(right) ? 1 : 0) - (keys.has(left) ? 1 : 0);
