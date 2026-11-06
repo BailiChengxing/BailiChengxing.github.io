@@ -1,0 +1,45 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no, viewport-fit=cover">
+  <meta name="theme-color" content="#091019">
+  <title>双人海岛求生2</title>
+  <link rel="icon" href="icons/app-icon.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <main id="game-shell">
+    <div id="GameDiv">
+      <canvas id="GameCanvas" tabindex="0"></canvas>
+    </div>
+
+    <section id="start-screen" aria-labelledby="game-title">
+      <div class="start-panel">
+        <img class="game-icon" src="icons/app-icon.png" alt="">
+        <h1 id="game-title">双人海岛求生2</h1>
+        <button id="start-button" type="button">进入游戏</button>
+      </div>
+    </section>
+
+    <section id="loading-screen" class="is-hidden" aria-live="polite">
+      <div id="splash" class="loading-panel">
+        <div class="loading-title">正在进入海岛</div>
+        <div class="progress-bar"><span></span></div>
+        <div id="loading-detail" class="loading-detail">准备游戏资源</div>
+      </div>
+    </section>
+
+    <section id="error-screen" class="is-hidden" role="alert">
+      <div class="error-panel">
+        <h2>游戏加载失败</h2>
+        <p id="error-message">请通过本地 HTTP 服务打开此页面并刷新重试。</p>
+      </div>
+    </section>
+  </main>
+
+  <script src="src/settings.js"></script>
+  <script src="cocos2d-js-min.js"></script>
+  <script src="main.js"></script>
+</body>
+</html>
